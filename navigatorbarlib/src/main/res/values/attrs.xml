@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--导航栏控件-->
+    <declare-styleable name="NavigatorBarView">
+        <attr name="navbar_background" format="color|reference"/>
+        <attr name="navbar_height" format="dimension"/>
+        <attr name="navbar_divider" format="reference"/>
+        <attr name="navbar_text_size" format="dimension|reference"/>
+        <attr name="navbar_text_color" format="color|reference"/>
+        <attr name="navbar_root_text" format="string|reference"/>
+        <attr name="navbar_always_show_root" format="boolean"/>
+    </declare-styleable>
+</resources>
