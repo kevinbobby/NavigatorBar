@@ -11,7 +11,6 @@
          android:id="@+id/navBarView"
          app:navbar_background="#0F0"
          app:navbar_height="40dp"
-         app:navbar_root_text="根目录"
          app:navbar_always_show_root="true"
          app:navbar_text_color="#f00"
          app:navbar_text_size="16sp"
@@ -22,18 +21,21 @@
 ```
 Activity implements NavigatorBarView.OnNavItemClickCallback
 NavigatorBarView mNavBarView = findViewById(R.id.navBarView);
+// 设置节点的点击事件回调
+mNavBarView.setNavItemClickCallback(this);
 ```
 
-3 设置缓存数据的处理
+3.1 添加导航栏的子元素，没有缓存数据
 ```
-    设置根目录的缓存数据
-    mNavBarView.addRootCache(mFirstEntities);
+    mNavBarView.addNavEntityNoCache(dataEntity.dataId, dataEntity.dataName);
+```
 
-    添加导航栏的子元素，设置缓存数据
+3.2 添加导航栏的子元素，设置缓存数据
+```
     mNavBarView.addNavEntityWithCache(dataEntity.dataId, dataEntity.dataName, dataEntity.dataEntities);
-
-    读取缓存数据，在回调方法`onNavClick`中处理
-    mDataAdapter.setData((ArrayList<DataEntity>) navEntity.dataList);
 ```
 4 回调中处理点击事件，详见Demo
-public void onNavClick(NavEntity navEntity)
+```
+    public void onNavClick(NavEntity navEntity)
+```
+
