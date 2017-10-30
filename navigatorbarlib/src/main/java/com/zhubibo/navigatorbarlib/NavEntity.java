@@ -1,7 +1,5 @@
 package com.zhubibo.navigatorbarlib;
 
-import java.util.ArrayList;
-
 /**
  * Created by Kevin on 2016/10/3 0:11.
  * Email: bibo.software@gmail.com
@@ -12,18 +10,24 @@ public class NavEntity {
     public int index;
 
     // 导航标题
-    public String dataTitle;
+    public String navTitle;
 
-    // 导航 string id
-    public String dataId;
+    // 导航id
+    public Object dataId;
 
     // 当前目录缓存的数据
-    public ArrayList<?> dataList;
+    public Object cacheData;
 
-    public NavEntity(int index, String dataTitle, String dataId, ArrayList<?> dataList) {
+    public NavEntity(int index, String navTitle, Object dataId) {
         this.index = index;
-        this.dataTitle = dataTitle;
+        this.navTitle = navTitle;
         this.dataId = dataId;
-        this.dataList = dataList;
+    }
+
+    public NavEntity(int index, String navTitle, Object dataId, Object cacheData) {
+        this.index = index;
+        this.navTitle = navTitle;
+        this.dataId = dataId;
+        this.cacheData = cacheData;
     }
 }

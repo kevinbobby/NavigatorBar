@@ -7,7 +7,6 @@
         <attr name="navbar_divider" format="reference"/>
         <attr name="navbar_text_size" format="dimension|reference"/>
         <attr name="navbar_text_color" format="color|reference"/>
-        <attr name="navbar_root_text" format="string|reference"/>
         <attr name="navbar_always_show_root" format="boolean"/>
     </declare-styleable>
 </resources>

@@ -24,12 +24,10 @@ public class NavigatorBarView extends LinearLayout implements NavAdapter.OnNavIt
     private Drawable navDivider;
     private int navTextColor;
     private int navTextSize;
-    // 不可为空
-    private String navRootText;
     // 设置根元素是否始终显示，如果为false，则只有根元素的时候，会隐藏导航栏
     private boolean alwaysShowRoot;
 
-    private View mRootView;
+    private View mBarView;
     // 导航信息
     private ArrayList<NavEntity> mNavEntities = new ArrayList<>();
     private RecyclerView mNavRv;
@@ -56,15 +54,14 @@ public class NavigatorBarView extends LinearLayout implements NavAdapter.OnNavIt
         navDivider = typedArray.getDrawable(R.styleable.NavigatorBarView_navbar_divider);
         navTextColor = typedArray.getColor(R.styleable.NavigatorBarView_navbar_text_color, Color.BLACK);
         navTextSize = typedArray.getDimensionPixelSize(R.styleable.NavigatorBarView_navbar_text_size, dip2px(context, 14));
-        navRootText = typedArray.getString(R.styleable.NavigatorBarView_navbar_root_text);
         alwaysShowRoot = typedArray.getBoolean(R.styleable.NavigatorBarView_navbar_always_show_root, true);
         typedArray.recycle();
         init(context);
     }
 
     private void init(Context context) {
-        mRootView = LayoutInflater.from(context).inflate(R.layout.view_navigator_bar, this);
-        mRootView.setVisibility(GONE);
+        mBarView = LayoutInflater.from(context).inflate(R.layout.view_navigator_bar, this);
+        mBarView.setVisibility(GONE);
 
         mNavRv = findViewById(R.id.navigatorRv);
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
@@ -77,15 +74,13 @@ public class NavigatorBarView extends LinearLayout implements NavAdapter.OnNavIt
         mNavAdapter.setNavItemClickListener(this);
 
         // 设置控件背景色
-        mRootView.setBackgroundColor(navBackgroundColor);
+        mBarView.setBackgroundColor(navBackgroundColor);
         // 设置控件高度
-        mRootView.setMinimumHeight(navHeight);
-        // 设置控件根目录
-        initRootEntity(navRootText, null);
-    }
-
-    public void setNavItemClickCallback(OnNavItemClickCallback itemClickCallback) {
-        this.clickCallback = itemClickCallback;
+        mBarView.setMinimumHeight(navHeight);
+        // 设置控件是否显示
+        if (mBarView.getVisibility() == GONE && alwaysShowRoot) {
+            mBarView.setVisibility(VISIBLE);
+        }
     }
 
     @Override
@@ -98,64 +93,61 @@ public class NavigatorBarView extends LinearLayout implements NavAdapter.OnNavIt
         mNavRv.smoothScrollToPosition(navEntity.index);
         // 如果alwaysShowRoot为false
         if (!alwaysShowRoot && navEntity.index == 0) {
-            mRootView.setVisibility(GONE);
+            mBarView.setVisibility(GONE);
         }
         // 点击事件
         clickCallback.onNavClick(navEntity);
     }
 
     /**
-     * 初始化根元素
-     * @param rootName  根元素名称
-     * @param dataList  缓存数据
-     */
-    public void initRootEntity(String rootName, ArrayList<?> dataList) {
-        if (mRootView.getVisibility() == GONE && alwaysShowRoot) {
-            mRootView.setVisibility(VISIBLE);
-        }
-        NavEntity mRootEntity = new NavEntity(0, rootName, "0", dataList);
-        mNavEntities.add(mRootEntity);
-        mCurrEntity = mRootEntity;
-        mNavAdapter.setData(mNavEntities);
-    }
-
-    /**
-     * 如果需要缓存，则必须要设置根元素的缓存值
-     * @param dataList      根元素的数据list
-     */
-    public void addRootCache(ArrayList<?> dataList) {
-        mNavEntities.get(0).dataList = dataList;
-    }
-
-    /**
      * 增加导航元素，不需要缓存数据
      * @param dataId        导航元素id，用于后续点击事件主键的获取
-     * @param dataTitle     导航元素名称
+     * @param navTitle     导航元素名称
      */
-    public void addNavEntityNoCache(String dataId, String dataTitle) {
-        addNavEntityWithCache(dataId, dataTitle, null);
+    public void addNavEntityNoCache(Object dataId, String navTitle) {
+        NavEntity navEntity = new NavEntity(mNavEntities.size(), navTitle, dataId);
+        addNavEntity(navEntity);
     }
 
     /**
      * 增加导航元素，需要缓存数据
      * @param dataId        导航元素id，用于后续点击事件主键的获取
-     * @param dataTitle     导航元素名称
-     * @param dataList      缓存数据
+     * @param navTitle     导航元素名称
+     * @param cacheData     缓存数据
      */
-    public void addNavEntityWithCache(String dataId, String dataTitle, ArrayList<?> dataList) {
-        if (mRootView.getVisibility() == GONE) {
-            mRootView.setVisibility(VISIBLE);
+    public void addNavEntityWithCache(Object dataId, String navTitle, Object cacheData) {
+        NavEntity navEntity = new NavEntity(mNavEntities.size(), navTitle, dataId, cacheData);
+        addNavEntity(navEntity);
+    }
+
+    /**
+     * 增加导航元素
+     * @param navEntity     导航元素
+     */
+    private void addNavEntity(NavEntity navEntity) {
+        if (mBarView.getVisibility() == GONE) {
+            mBarView.setVisibility(VISIBLE);
         }
-        NavEntity navEntity = new NavEntity(mNavEntities.size(), dataTitle, dataId, dataList);
         mNavEntities.add(navEntity);
         mNavAdapter.setData(mNavEntities);
         mCurrEntity = navEntity;
-        mNavRv.smoothScrollToPosition(navEntity.index);
+        // TODO 如果滑动到0，则后续数据都不显示，原因未知
+        if (navEntity.index > 0) {
+            mNavRv.smoothScrollToPosition(navEntity.index);
+        }
     }
 
     public int dip2px(Context context, float dpValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
+    }
+
+    /**
+     * 设置导航item的点击回调事件
+     * @param itemClickCallback     导航item的点击回调事件
+     */
+    public void setNavItemClickCallback(OnNavItemClickCallback itemClickCallback) {
+        this.clickCallback = itemClickCallback;
     }
 
     public interface OnNavItemClickCallback {

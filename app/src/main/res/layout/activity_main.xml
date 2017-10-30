@@ -13,7 +13,6 @@
         android:id="@+id/navBarView"
         app:navbar_background="#0F0"
         app:navbar_height="40dp"
-        app:navbar_root_text="根目录"
         app:navbar_always_show_root="true"
         app:navbar_text_color="#f00"
         app:navbar_text_size="16sp"

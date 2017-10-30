@@ -38,11 +38,11 @@ public class WithCacheActivity extends AppCompatActivity implements
         // 初始化导航list
         mNavBarView = findViewById(R.id.navBarView);
         mDataLv = findViewById(R.id.mainDataLv);
+
+        mNavBarView.addNavEntityWithCache("0", "root", DataUtil.mFirstEntities);
     }
 
     private void initValues() {
-        // 需要缓存，则必须要设置根元素的缓存值
-        mNavBarView.addRootCache(DataUtil.mFirstEntities);
     }
 
     private void bindEvents() {
@@ -71,7 +71,7 @@ public class WithCacheActivity extends AppCompatActivity implements
     @Override
     public void onNavClick(NavEntity navEntity) {
         // 使用了addNavEntityWithData缓存数据，则可以直接获取缓存
-        mDataAdapter.setData((ArrayList<DataEntity>) navEntity.dataList);
+        mDataAdapter.setData((ArrayList<DataEntity>) navEntity.cacheData);
 
     }
 }

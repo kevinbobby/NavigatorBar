@@ -54,7 +54,7 @@ public class NavAdapter extends RecyclerView.Adapter<NavAdapter.NavViewHolder> {
             } else {
                 viewHolder.navLineIv.setVisibility(View.VISIBLE);
             }
-            viewHolder.navTitle.setText(navEntity.dataTitle);
+            viewHolder.navTitle.setText(navEntity.navTitle);
             viewHolder.navTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
